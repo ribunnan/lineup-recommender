@@ -1,58 +1,96 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
-  <meta name="color-scheme" content="light">
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>阵容推荐器</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <header>
     <h1>阵容推荐器</h1>
   </header>
+
   <div class="container">
-    <div class="lineup-form" id="lineupForm">
-      <!-- 六个角色槽位 -->
-      <div class="slot" data-index="0">
-        <div class="slot-img"><img src="images/placeholder.png" alt="角色0"></div>
-        <button class="slot-btn" data-index="0">选择角色</button>
-      </div>
-      <div class="slot" data-index="1">
-        <div class="slot-img"><img src="images/placeholder.png" alt="角色1"></div>
-        <button class="slot-btn" data-index="1">选择角色</button>
-      </div>
-      <div class="slot" data-index="2">
-        <div class="slot-img"><img src="images/placeholder.png" alt="角色2"></div>
-        <button class="slot-btn" data-index="2">选择角色</button>
-      </div>
-      <div class="slot" data-index="3">
-        <div class="slot-img"><img src="images/placeholder.png" alt="角色3"></div>
-        <button class="slot-btn" data-index="3">选择角色</button>
-      </div>
-      <div class="slot" data-index="4">
-        <div class="slot-img"><img src="images/placeholder.png" alt="角色4"></div>
-        <button class="slot-btn" data-index="4">选择角色</button>
-      </div>
-      <div class="slot" data-index="5">
-        <div class="slot-img"><img src="images/placeholder.png" alt="角色5"></div>
-        <button class="slot-btn" data-index="5">选择角色</button>
+    <!-- —— 角色选择 —— -->
+    <div class="role-selection">
+      <h2>选择角色（本局两位）</h2>
+      <div class="role-slots">
+        <div class="role-slot" data-index="0">
+          <div class="slot-img"><img src="images/placeholder.png" alt="角色1" /></div>
+          <button class="role-btn" data-index="0">选择角色</button>
+        </div>
+        <div class="role-slot" data-index="1">
+          <div class="slot-img"><img src="images/placeholder.png" alt="角色2" /></div>
+          <button class="role-btn" data-index="1">选择角色</button>
+        </div>
       </div>
     </div>
+
+    <!-- —— 卡牌选择 —— -->
+    <div class="lineup-form" id="lineupForm">
+      <h2>选择卡牌（最多六张）</h2>
+      <div class="card-slots">
+        <div class="slot" data-index="0">
+          <div class="slot-img"><img src="images/placeholder.png" alt="卡牌0" /></div>
+          <button class="slot-btn" data-index="0">选择卡牌</button>
+        </div>
+        <div class="slot" data-index="1">
+          <div class="slot-img"><img src="images/placeholder.png" alt="卡牌1" /></div>
+          <button class="slot-btn" data-index="1">选择卡牌</button>
+        </div>
+        <div class="slot" data-index="2">
+          <div class="slot-img"><img src="images/placeholder.png" alt="卡牌2" /></div>
+          <button class="slot-btn" data-index="2">选择卡牌</button>
+        </div>
+        <div class="slot" data-index="3">
+          <div class="slot-img"><img src="images/placeholder.png" alt="卡牌3" /></div>
+          <button class="slot-btn" data-index="3">选择卡牌</button>
+        </div>
+        <div class="slot" data-index="4">
+          <div class="slot-img"><img src="images/placeholder.png" alt="卡牌4" /></div>
+          <button class="slot-btn" data-index="4">选择卡牌</button>
+        </div>
+        <div class="slot" data-index="5">
+          <div class="slot-img"><img src="images/placeholder.png" alt="卡牌5" /></div>
+          <button class="slot-btn" data-index="5">选择卡牌</button>
+        </div>
+      </div>
+    </div>
+
     <button id="saveLineup">保存阵容</button>
+
     <div class="lineup-list">
       <h2>历史阵容一览</h2>
       <div id="lineupDisplay"></div>
     </div>
   </div>
 
-  <!-- 弹窗模态框 -->
-  <div id="modal" class="modal">
+  <!-- —— 角色弹窗 —— -->
+  <div id="roleModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
         <h3>选择角色</h3>
-        <button id="modalClose">&times;</button>
+        <button id="roleModalClose">&times;</button>
+      </div>
+      <div class="modal-filters">
+        <input
+          type="text"
+          id="filterRoleName"
+          placeholder="输入角色名称关键字"
+        />
+      </div>
+      <div class="modal-grid" id="roleModalGrid"></div>
+    </div>
+  </div>
+
+  <!-- —— 卡牌弹窗 —— -->
+  <div id="cardModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>选择卡牌</h3>
+        <button id="cardModalClose">&times;</button>
       </div>
       <div class="modal-filters">
         <select id="filterStar">
@@ -76,11 +114,12 @@
           <option value="野兽">野兽</option>
         </select>
       </div>
-      <div class="modal-grid" id="modalGrid"></div>
+      <div class="modal-grid" id="cardModalGrid"></div>
     </div>
   </div>
 
   <script src="cardData.js"></script>
+  <script src="rolesData.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
