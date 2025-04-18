@@ -32,14 +32,36 @@
     <section class="card-selection">
       <h2>选择卡牌（最多六张）</h2>
       <div class="card-slots">
-        <!-- 六个槽位，每个附带“选择卡牌”和“装备”按钮 -->
-        ${[0,1,2,3,4,5].map(i => `
-        <div class="slot card-slot" data-index="${i}">
-          <div class="slot-img"><img src="images/placeholder.png" alt="卡牌${i}" /></div>
-          <button class="card-btn" data-index="${i}">选择卡牌</button>
-          <button class="equip-btn" data-index="${i}">装备</button>
+        <div class="slot card-slot" data-index="0">
+          <div class="slot-img"><img src="images/placeholder.png" alt="卡牌0" /></div>
+          <button class="card-btn" data-index="0">选择卡牌</button>
+          <button class="equip-btn" data-index="0">装备</button>
         </div>
-        `).join('')}
+        <div class="slot card-slot" data-index="1">
+          <div class="slot-img"><img src="images/placeholder.png" alt="卡牌1" /></div>
+          <button class="card-btn" data-index="1">选择卡牌</button>
+          <button class="equip-btn" data-index="1">装备</button>
+        </div>
+        <div class="slot card-slot" data-index="2">
+          <div class="slot-img"><img src="images/placeholder.png" alt="卡牌2" /></div>
+          <button class="card-btn" data-index="2">选择卡牌</button>
+          <button class="equip-btn" data-index="2">装备</button>
+        </div>
+        <div class="slot card-slot" data-index="3">
+          <div class="slot-img"><img src="images/placeholder.png" alt="卡牌3" /></div>
+          <button class="card-btn" data-index="3">选择卡牌</button>
+          <button class="equip-btn" data-index="3">装备</button>
+        </div>
+        <div class="slot card-slot" data-index="4">
+          <div class="slot-img"><img src="images/placeholder.png" alt="卡牌4" /></div>
+          <button class="card-btn" data-index="4">选择卡牌</button>
+          <button class="equip-btn" data-index="4">装备</button>
+        </div>
+        <div class="slot card-slot" data-index="5">
+          <div class="slot-img"><img src="images/placeholder.png" alt="卡牌5" /></div>
+          <button class="card-btn" data-index="5">选择卡牌</button>
+          <button class="equip-btn" data-index="5">装备</button>
+        </div>
       </div>
     </section>
 
@@ -108,7 +130,6 @@
       <div class="modal-filters">
         <input type="text" id="filterEquipName" placeholder="输入装备名称关键字" />
       </div>
-      <!-- 已选装备固定显示 -->
       <div id="selectedEquips" class="selected-list"></div>
       <div id="equipModalGrid" class="modal-grid"></div>
     </div>
