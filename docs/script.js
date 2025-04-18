@@ -1,152 +1,104 @@
-let currentType = null, currentIndex = null;
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>阵容推荐器</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>阵容推荐器</h1>
+  </header>
 
-function openModal(type, idx) {
-  currentType = type;
-  currentIndex = idx;
-  document.getElementById(type + 'Modal').classList.add('active');
-  renderGrid(type);
-}
+  <div class="container">
+    <!-- —— 角色选择 —— -->
+    <div class="role-selection">
+      <h2>选择角色（本局两位）</h2>
+      <div class="role-slots" id="roleSlots"></div>
+    </div>
 
-function closeModal(evt) {
-  const modalId = evt.currentTarget.dataset.modal;
-  document.getElementById(modalId).classList.remove('active');
-}
+    <!-- —— 卡牌选择 —— -->
+    <div class="lineup-form">
+      <h2>选择卡牌（最多六张）</h2>
+      <div class="card-slots" id="cardSlots"></div>
+    </div>
 
-function renderGrid(type) {
-  let data = [], grid, filterVal;
-  if (type === 'role') {
-    data = rolesData;
-    grid = document.getElementById('roleModalGrid');
-    filterVal = document.getElementById('filterRoleName').value.toLowerCase();
-    data = data.filter(r => r.name.toLowerCase().includes(filterVal));
-  }
-  if (type === 'card') {
-    data = cardData;
-    grid = document.getElementById('cardModalGrid');
-    const star = document.getElementById('filterStar').value;
-    const race = document.getElementById('filterRace').value;
-    data = data.filter(c => (!star || c.star === star) && (!race || c.race === race));
-  }
-  if (type === 'equip') {
-    data = equipData;
-    grid = document.getElementById('equipModalGrid');
-    filterVal = document.getElementById('filterEquipName').value.toLowerCase();
-    data = data.filter(e => e.name.toLowerCase().includes(filterVal));
-  }
+    <button id="saveLineup">保存阵容</button>
 
-  grid.innerHTML = '';
-  data.forEach(item => {
-    let imgSrc;
-    if (type === 'role') {
-      imgSrc = `images/角色/${item.name}.jpg`;
-    } else if (type === 'card') {
-      imgSrc = `images/${item.race}/${item.star}/${item.name}.jpg`;
-    } else {
-      imgSrc = `images/装备/${item.name}.jpg`;
-    }
+    <div class="lineup-list">
+      <h2>历史阵容一览</h2>
+      <div id="lineupDisplay"></div>
+    </div>
+  </div>
 
-    const d = document.createElement('div');
-    d.className = 'card';
-    d.innerHTML = `
-      <img src="${imgSrc}" alt="${item.name}" onerror="this.src='images/placeholder.png'">
-      <p>${item.name}</p>
-      <button>${type === 'equip' ? '添加' : '选择'}</button>
-    `;
-    d.querySelector('button').onclick = () => selectItem(type, item);
-    grid.appendChild(d);
-  });
-}
+  <!-- —— 角色弹窗 —— -->
+  <div id="roleModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>选择角色</h3>
+        <button class="close" data-modal="roleModal">&times;</button>
+      </div>
+      <div class="modal-filters">
+        <input type="text" id="filterRoleName" placeholder="输入角色名称关键字" />
+      </div>
+      <div class="modal-grid" id="roleModalGrid"></div>
+    </div>
+  </div>
 
-function selectItem(type, item) {
-  if (type === 'role') {
-    const slot = document.querySelector(`.role-slot[data-index="${currentIndex}"] .slot-img img`);
-    slot.src = `images/角色/${item.name}.jpg`;
-    document.querySelector(`.role-slot[data-index="${currentIndex}"] button`).textContent = item.name;
-    closeModal({ currentTarget: { dataset: { modal: 'roleModal' } } });
-  }
-  if (type === 'card') {
-    const slot = document.querySelector(`.slot[data-index="${currentIndex}"] .slot-img img`);
-    slot.src = `images/${item.race}/${item.star}/${item.name}.jpg`;
-    document.querySelector(`.slot[data-index="${currentIndex}"] button:not(.equip-btn)`).textContent = item.name;
-    closeModal({ currentTarget: { dataset: { modal: 'cardModal' } } });
-  }
-  if (type === 'equip') {
-    const sl = document.querySelector(`.slot[data-index="${currentIndex}"]`);
-    let arr = sl.dataset.equip ? JSON.parse(sl.dataset.equip) : [];
-    arr.push(item.name);
-    sl.dataset.equip = JSON.stringify(arr);
-    sl.querySelector('.equip-btn').textContent = `装备 (${arr.length})`;
-  }
-}
+  <!-- —— 卡牌弹窗 —— -->
+  <div id="cardModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>选择卡牌</h3>
+        <button class="close" data-modal="cardModal">&times;</button>
+      </div>
+      <div class="modal-filters">
+        <select id="filterStar">
+          <option value="">全部星级</option>
+          <option value="1星">1 星</option>
+          <option value="2星">2 星</option>
+          <option value="3星">3 星</option>
+          <option value="4星">4 星</option>
+          <option value="5星">5 星</option>
+          <option value="6星">6 星</option>
+        </select>
+        <select id="filterRace">
+          <option value="">全部种族</option>
+          <option value="龙">龙</option>
+          <option value="中立">中立</option>
+          <option value="幽灵">幽灵</option>
+          <option value="战士">战士</option>
+          <option value="星裔">星裔</option>
+          <option value="机械">机械</option>
+          <option value="自然">自然</option>
+          <option value="野兽">野兽</option>
+        </select>
+      </div>
+      <div class="modal-grid" id="cardModalGrid"></div>
+    </div>
+  </div>
 
-function saveLineup() {
-  const roles = Array.from(document.querySelectorAll('.role-slot button')).map(b => b.textContent);
-  const cards = Array.from(document.querySelectorAll('.slot button:not(.equip-btn)')).map(b => b.textContent);
-  const equips = Array.from(document.querySelectorAll('.slot')).map(s => s.dataset.equip ? JSON.parse(s.dataset.equip) : []);
-  const lineup = { roles, cards, equips };
-  const arr = JSON.parse(localStorage.getItem('lineups') || '[]');
-  arr.push(lineup);
-  localStorage.setItem('lineups', JSON.stringify(arr));
-  renderHistory();
-}
+  <!-- —— 装备弹窗 —— -->
+  <div id="equipModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>选择装备</h3>
+        <button class="close" data-modal="equipModal">&times;</button>
+      </div>
+      <!-- 新增：已选择装备展示行 -->
+      <div id="equipSelected" class="selected-equip-row"></div>
+      <div class="modal-filters">
+        <input type="text" id="filterEquipName" placeholder="输入装备名称关键字" />
+      </div>
+      <div class="modal-grid" id="equipModalGrid"></div>
+    </div>
+  </div>
 
-function renderHistory() {
-  const arr = JSON.parse(localStorage.getItem('lineups') || '[]');
-  const box = document.getElementById('lineupDisplay');
-  box.innerHTML = '';
-  arr.forEach((l, i) => {
-    const d = document.createElement('div');
-    d.className = 'item';
-    d.textContent = `#${i+1} 角色: ${l.roles.join(', ')} | 卡牌: ${l.cards.join(', ')} | 装备: ${l.equips.map(e => e.join('+')).join(' ; ')}`;
-    box.appendChild(d);
-  });
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  // 生成 2 个角色槽
-  const rs = document.getElementById('roleSlots');
-  for (let i = 0; i < 2; i++) {
-    const d = document.createElement('div');
-    d.className = 'role-slot';
-    d.dataset.index = i;
-    d.innerHTML = `
-      <div class="slot-img"><img src="images/placeholder.png"></div>
-      <button data-index="${i}">选择角色</button>
-    `;
-    rs.appendChild(d);
-  }
-  // 生成 6 个卡牌槽（含装备按钮）
-  const cs = document.getElementById('cardSlots');
-  for (let i = 0; i < 6; i++) {
-    const d = document.createElement('div');
-    d.className = 'slot';
-    d.dataset.index = i;
-    d.innerHTML = `
-      <div class="slot-img"><img src="images/placeholder.png"></div>
-      <button data-index="${i}">选择卡牌</button>
-      <button class="equip-btn" data-index="${i}">装备</button>
-    `;
-    cs.appendChild(d);
-  }
-
-  // 绑定打开
-  document.querySelectorAll('.role-slot button')
-    .forEach(b => b.onclick = e => openModal('role', e.target.dataset.index));
-  document.querySelectorAll('.slot button:not(.equip-btn)')
-    .forEach(b => b.onclick = e => openModal('card', e.target.dataset.index));
-  document.querySelectorAll('.equip-btn')
-    .forEach(b => b.onclick = e => openModal('equip', e.target.dataset.index));
-
-  // 绑定关闭
-  document.querySelectorAll('.close').forEach(b => b.onclick = closeModal);
-
-  // 绑定筛选
-  document.getElementById('filterRoleName').addEventListener('input', () => renderGrid('role'));
-  document.getElementById('filterEquipName').addEventListener('input', () => renderGrid('equip'));
-  document.getElementById('filterStar').addEventListener('change', () => renderGrid('card'));
-  document.getElementById('filterRace').addEventListener('change', () => renderGrid('card'));
-
-  // 保存历史
-  document.getElementById('saveLineup').onclick = saveLineup;
-  renderHistory();
-});
+  <script src="rolesData.js"></script>
+  <script src="cardData.js"></script>
+  <script src="equipData.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
