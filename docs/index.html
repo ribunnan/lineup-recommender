@@ -14,27 +14,41 @@
 
   <div class="container">
     <!-- —— 角色选择 —— -->
-    <div class="role-selection">
+    <section class="role-selection">
       <h2>选择角色（本局两位）</h2>
-      <div class="role-slots" id="roleSlots">
-        <!-- JS 动态生成两个 .role-slot -->
+      <div class="role-slots">
+        <div class="slot role-slot" data-index="0">
+          <div class="slot-img"><img src="images/placeholder.png" alt="角色1" /></div>
+          <button class="role-btn" data-index="0">选择角色</button>
+        </div>
+        <div class="slot role-slot" data-index="1">
+          <div class="slot-img"><img src="images/placeholder.png" alt="角色2" /></div>
+          <button class="role-btn" data-index="1">选择角色</button>
+        </div>
       </div>
-    </div>
+    </section>
 
-    <!-- —— 卡牌选择 —— -->
-    <div class="lineup-form">
+    <!-- —— 卡牌+装备 选择 —— -->
+    <section class="card-selection">
       <h2>选择卡牌（最多六张）</h2>
-      <div class="card-slots" id="cardSlots">
-        <!-- JS 动态生成六个 .slot -->
+      <div class="card-slots">
+        <!-- 六个槽位，每个附带“选择卡牌”和“装备”按钮 -->
+        ${[0,1,2,3,4,5].map(i => `
+        <div class="slot card-slot" data-index="${i}">
+          <div class="slot-img"><img src="images/placeholder.png" alt="卡牌${i}" /></div>
+          <button class="card-btn" data-index="${i}">选择卡牌</button>
+          <button class="equip-btn" data-index="${i}">装备</button>
+        </div>
+        `).join('')}
       </div>
-    </div>
+    </section>
 
     <button id="saveLineup">保存阵容</button>
 
-    <div class="lineup-list">
+    <section class="lineup-list">
       <h2>历史阵容一览</h2>
       <div id="lineupDisplay"></div>
-    </div>
+    </section>
   </div>
 
   <!-- —— 角色弹窗 —— -->
@@ -42,12 +56,12 @@
     <div class="modal-content">
       <div class="modal-header">
         <h3>选择角色</h3>
-        <button class="close" data-modal="roleModal">&times;</button>
+        <button id="roleModalClose">&times;</button>
       </div>
       <div class="modal-filters">
         <input type="text" id="filterRoleName" placeholder="输入角色名称关键字" />
       </div>
-      <div class="modal-grid" id="roleModalGrid"></div>
+      <div id="roleModalGrid" class="modal-grid"></div>
     </div>
   </div>
 
@@ -56,7 +70,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h3>选择卡牌</h3>
-        <button class="close" data-modal="cardModal">&times;</button>
+        <button id="cardModalClose">&times;</button>
       </div>
       <div class="modal-filters">
         <select id="filterStar">
@@ -80,7 +94,7 @@
           <option value="野兽">野兽</option>
         </select>
       </div>
-      <div class="modal-grid" id="cardModalGrid"></div>
+      <div id="cardModalGrid" class="modal-grid"></div>
     </div>
   </div>
 
@@ -89,17 +103,19 @@
     <div class="modal-content">
       <div class="modal-header">
         <h3>选择装备</h3>
-        <button class="close" data-modal="equipModal">&times;</button>
+        <button id="equipModalClose">&times;</button>
       </div>
       <div class="modal-filters">
         <input type="text" id="filterEquipName" placeholder="输入装备名称关键字" />
       </div>
-      <div class="modal-grid" id="equipModalGrid"></div>
+      <!-- 已选装备固定显示 -->
+      <div id="selectedEquips" class="selected-list"></div>
+      <div id="equipModalGrid" class="modal-grid"></div>
     </div>
   </div>
 
-  <script src="rolesData.js"></script>
   <script src="cardData.js"></script>
+  <script src="rolesData.js"></script>
   <script src="equipData.js"></script>
   <script src="script.js"></script>
 </body>
