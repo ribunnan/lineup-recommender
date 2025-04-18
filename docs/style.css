@@ -1,159 +1,49 @@
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-body {
-  font-family: 'Inter', sans-serif;
-  background-color: #f9fafb;
-  color: #333;
-}
-header {
-  background: #fff;
-  padding: 1rem;
-  text-align: center;
-  border-bottom: 1px solid #e5e7eb;
-}
-.container {
-  max-width: 900px;
-  margin: 2rem auto;
-  padding: 0 1rem;
-}
-/* 角色 & 卡牌 槽 */
-.role-slots, .card-slots {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin: 1rem 0;
-}
-.role-slot, .slot {
-  width: calc(33.333% - 0.667rem);
-  text-align: center;
-}
-.slot-img {
-  width: 100%;
-  padding-top: 100%;
-  position: relative;
-  background: #f3f4f6;
-  border-radius: 8px;
-  overflow: hidden;
-}
-.slot-img img {
-  position: absolute;
-  top: 0; left: 0; width: 100%; height: 100%;
-  object-fit: contain;
-}
-.role-slot button,
-.slot button {
-  margin-top: 0.5rem;
-  padding: 0.5rem;
-  background: #3b82f6; color: #fff;
-  border: none; border-radius: 4px;
-  cursor: pointer;
-}
-.role-slot button:hover,
-.slot button:hover {
-  background: #2563eb;
-}
-#saveLineup {
-  display: block;
-  margin: 1rem auto;
-  padding: 0.75rem 1.5rem;
-  background: #10b981; color: #fff;
-  border: none; border-radius: 8px;
-  cursor: pointer;
-}
-#saveLineup:hover {
-  background: #059669;
-}
-.lineup-list .item {
-  padding: 0.5rem 0;
-  border-bottom: 1px solid #e5e7eb;
-}
-/* 通用弹窗 */
-.modal {
-  display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,0.5);
-  align-items: center; justify-content: center;
-}
-.modal.active {
-  display: flex;
-}
-.modal-content {
-  background: #fff;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 600px;
-  max-height: 80%;
-  overflow-y: auto;
-  padding: 1rem;
-}
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.modal-header .close {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  position: sticky;
-  top: 0;
-  background: #fff;
-}
-.modal-filters {
-  margin: 1rem 0;
-  display: flex;
-  gap: 0.5rem;
-}
+/* Reset & 全局 */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', sans-serif; background: #f9fafb; color: #333; line-height: 1.5; }
+header { background: #fff; padding: 1rem; text-align: center; border-bottom: 1px solid #e5e7eb; }
+header h1 { font-size: 1.75rem; }
+
+/* 布局容器 */
+.container { max-width: 900px; margin: 1.5rem auto; padding: 0 1rem; }
+
+/* 角色 & 卡牌 槽位 */
+.role-slots, .card-slots { display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem; }
+.slot { width: calc(33.333% - 0.666rem); text-align: center; }
+.slot-img { width: 100%; padding-top: 100%; position: relative; background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; }
+.slot-img img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; }
+
+/* 按钮 */
+.slot button { margin-top: 0.5rem; padding: 0.4rem 0.6rem; font-size: 0.9rem; border: none; border-radius: 6px; cursor: pointer; }
+.role-btn, .card-btn { background: #3b82f6; color: #fff; }
+.equip-btn { background: #f59e0b; color: #fff; margin-left: 0.5rem; }
+button:hover { opacity: 0.9; }
+
+/* 保存 & 历史阵容 */
+#saveLineup { display: block; margin: 1rem auto; padding: 0.7rem 1.2rem; background: #10b981; color: #fff; border: none; border-radius: 6px; font-size: 1rem; cursor: pointer; }
+.lineup-list { margin-top: 2rem; }
+.lineup-list h2 { margin-bottom: 0.5rem; }
+#lineupDisplay .lineup-item { padding: 0.5rem 0; border-bottom: 1px solid #e5e7eb; }
+
+/* 模态框 */
+.modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
+.modal.show { display: flex; }
+.modal-content { background: #fff; border-radius: 8px; width: 90%; max-width: 600px; max-height: 85%; overflow-y: auto; padding: 1rem; position: relative; }
+
+/* 固定已选装备 */
+.selected-list { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.5rem 0; padding-bottom: 0.5rem; border-bottom: 1px solid #e5e7eb; }
+
+/* 头部 & 筛选 */
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+.modal-header button { background: none; border: none; font-size: 1.5rem; cursor: pointer; }
+.modal-filters { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; }
 .modal-filters input,
-.modal-filters select {
-  flex: 1;
-  padding: 0.5rem;
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
-}
-.modal-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: 1rem;
-}
-/* 卡牌/装备/角色 条目 */
-.modal-grid .card {
-  text-align: center;
-}
-.modal-grid .card img {
-  width: 100%;
-  height: 100px;
-  object-fit: contain;
-  border-radius: 4px;
-}
-.modal-grid .card p {
-  margin: 0.5rem 0 0.25rem;
-  font-size: 0.9rem;
-}
-.modal-grid .card button {
-  padding: 0.25rem 0.5rem;
-  background: #3b82f6;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-.modal-grid .card button:hover {
-  background: #2563eb;
-}
-/* 新增：装备弹窗顶部已选展示 */
-.selected-equip-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
-}
-.selected-equip-row .chip {
-  background: #e5e7eb;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.85rem;
-}
+.modal-filters select { flex: 1; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 6px; }
+
+/* 网格列表 */
+.modal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; }
+.modal-grid .modal-item { text-align: center; }
+.modal-grid .modal-item img { width: 100%; height: 90px; object-fit: contain; border-radius: 4px; }
+.modal-grid .modal-item p { margin: 0.3rem 0; font-size: 0.9rem; }
+.modal-grid .modal-item button { padding: 0.3rem 0.5rem; font-size: 0.85rem; border: none; border-radius: 4px; background: #3b82f6; color: #fff; cursor: pointer; }
+.modal-grid .modal-item button:hover { background: #2563eb; }
