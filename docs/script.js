@@ -1,11 +1,3 @@
-// 示例数据，请根据实际情况替换或动态加载
-const cardData = [
-  { name: '战士A', race: '战士', star: '1星' },
-  { name: '战士B', race: '战士', star: '2星' },
-  { name: '龙族C', race: '龙族', star: '3星' },
-  // … completeness: 所有卡牌信息
-];
-
 let currentSlot = 0;
 
 // 打开弹窗
@@ -26,19 +18,27 @@ function renderModalGrid() {
   const race = document.getElementById('filterRace').value;
   const grid = document.getElementById('modalGrid');
   grid.innerHTML = '';
+
   cardData
     .filter(card => (!star || card.star === star) && (!race || card.race === race))
     .forEach(card => {
       const div = document.createElement('div');
       div.className = 'card-item';
+
       const img = document.createElement('img');
       img.src = `images/${card.race}/${card.star}/${card.name}.jpg`;
       img.alt = card.name;
+      img.onerror = () => {
+        img.src = 'images/placeholder.png';
+      };
+
       const p = document.createElement('p');
       p.textContent = card.name;
+
       const btn = document.createElement('button');
       btn.textContent = '选择';
       btn.onclick = () => selectCard(card);
+
       div.append(img, p, btn);
       grid.appendChild(div);
     });
@@ -47,8 +47,13 @@ function renderModalGrid() {
 // 选中卡牌，更新槽位
 function selectCard(card) {
   const slot = document.querySelector(`.slot[data-index="${currentSlot}"]`);
-  slot.querySelector('img').src = `images/${card.race}/${card.star}/${card.name}.jpg`;
-  slot.querySelector('img').alt = card.name;
+  const img = slot.querySelector('img');
+  img.src = `images/${card.race}/${card.star}/${card.name}.jpg`;
+  img.alt = card.name;
+  img.onerror = () => {
+    img.src = 'images/placeholder.png';
+  };
+
   slot.querySelector('.slot-btn').textContent = card.name;
   closeModal();
 }
@@ -85,5 +90,6 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('modalClose').addEventListener('click', closeModal);
   document.getElementById('filterStar').addEventListener('change', renderModalGrid);
   document.getElementById('filterRace').addEventListener('change', renderModalGrid);
+  document.getElementById('saveLineup').addEventListener('click', saveLineup);
   renderLineups();
 });
