@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="color-scheme" content="light">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>阵容推荐器</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>阵容推荐器</h1>
+  </header>
+
+  <div class="container">
+    <div class="lineup-form">
+      <h2>创建你的专属阵容</h2>
+      <div class="lineup-select">
+        <select id="card1"></select>
+        <select id="card2"></select>
+        <select id="card3"></select>
+        <select id="card4"></select>
+        <select id="card5"></select>
+        <select id="card6"></select>
+      </div>
+      <button class="submit-btn" onclick="saveLineup()">保存阵容</button>
+    </div>
+
+    <div class="lineup-list">
+      <h2>历史阵容一览</h2>
+      <div id="lineupDisplay"></div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
