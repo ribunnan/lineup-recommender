@@ -36,12 +36,14 @@ header h1 {
   padding: 0 1rem;
 }
 
+/* —— 这里是改动区域 —— */
 .lineup-form {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(3, 1fr); /* 每行 3 列 */
   gap: 1rem;
   margin-bottom: 1rem;
 }
+/* —— 改动结束 —— */
 
 .slot {
   text-align: center;
@@ -160,7 +162,7 @@ header h1 {
 
 .modal-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, 1fr); /* 弹窗中也使用 3 列 */
   gap: 1rem;
 }
 
