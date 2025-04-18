@@ -1,174 +1,43 @@
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-body {
-  font-family: 'Inter', sans-serif;
-  background-color: #f9fafb;
-  color: #333;
-  line-height: 1.6;
-}
-header {
-  background: #fff;
-  padding: 1.5rem;
-  text-align: center;
-  border-bottom: 1px solid #e5e7eb;
-}
-header h1 {
-  font-size: 2rem;
-  font-weight: 600;
-}
-.container {
-  max-width: 900px;
-  margin: 2rem auto;
-  padding: 0 1rem;
-}
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:'Inter',sans-serif; background:#f9fafb; color:#333; line-height:1.6; }
+header { background:#fff; padding:1.5rem; text-align:center; border-bottom:1px solid #e5e7eb; }
+h1 { font-size:2rem; font-weight:600; }
+.container { max-width:900px; margin:2rem auto; padding:0 1rem; }
 
-/* —— 角色选择 —— */
-.role-selection {
-  margin-bottom: 2rem;
-}
-.role-slots {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
-}
+/* 角色 & 卡牌 布局 */
+.role-slots, .card-slots { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:1.5rem; }
+.slot, .role-slot { text-align:center; }
+.slot-img { width:120px; height:120px; margin:0 auto .5rem; border:1px solid #e5e7eb; border-radius:8px; overflow:hidden; background:#f3f4f6; }
+.slot-img img { width:100%; height:100%; object-fit:cover; }
 
-/* —— 卡牌选择，每行 3 个，共两行 —— */
-.card-slots {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
+/* 按钮 */
+.slot-btn, .role-btn, .equip-btn { background:#3b82f6; color:#fff; border:none; padding:.5rem; border-radius:8px; cursor:pointer; transition:background .3s; }
+.slot-btn:hover, .role-btn:hover { background:#2563eb; }
+.equip-btn { background:#f59e0b; }
+.equip-btn:hover { background:#d97706; }
 
-.slot, .role-slot {
-  text-align: center;
-}
-.slot-img {
-  width: 120px;
-  height: 120px;
-  margin: 0 auto .5rem;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  overflow: hidden;
-  background: #f3f4f6;
-}
-.slot-img img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  background-color: #fff;
-}
-.slot-btn, .role-btn {
-  background: #3b82f6;
-  color: #fff;
-  border: none;
-  padding: .5rem;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background .3s;
-}
-.slot-btn:hover, .role-btn:hover {
-  background: #2563eb;
-}
-#saveLineup {
-  background: #10b981;
-  color: #fff;
-  padding: .75rem 1.5rem;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background .3s;
-  display: block;
-  margin: 0 auto 1.5rem;
-}
-#saveLineup:hover {
-  background: #059669;
-}
-.lineup-list h2 {
-  margin-bottom: .5rem;
-}
-.lineup-item {
-  padding: .5rem 0;
-  border-bottom: 1px solid #e5e7eb;
-  font-size: .95rem;
-}
+/* 装备小图预览 */
+.equip-list { display:flex; flex-wrap:wrap; gap:.5rem; margin-top:.5rem; justify-content:center; }
+.equip-list .equip-item { width:50px; text-align:center; }
+.equip-list .equip-item img { width:100%; height:50px; object-fit:cover; border-radius:4px; }
 
-/* —— 弹窗 —— */
-.modal {
-  display: none;
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,.5);
-  align-items: center;
-  justify-content: center;
-}
-.modal.show {
-  display: flex;
-}
-.modal-content {
-  background: #fff;
-  border-radius: 8px;
-  width: 90%; max-width: 600px;
-  max-height: 80%; overflow: auto;
-  padding: 1rem;
-}
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-.modal-header button {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-}
-.modal-filters {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-.modal-filters input,
-.modal-filters select {
-  flex: 1;
-  padding: .5rem;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  background: #fff;
-}
-.modal-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-}
-.card-item {
-  text-align: center;
-}
-.card-item img {
-  width: 100%;
-  height: 150px;
-  object-fit: contain;
-  background-color: #fff;
-  border-radius: 4px;
-}
-.card-item p {
-  margin: .5rem 0;
-  font-size: .9rem;
-}
-.card-item button {
-  background: #3b82f6;
-  color: #fff;
-  border: none;
-  padding: .25rem .5rem;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background .3s;
-}
-.card-item button:hover {
-  background: #2563eb;
-}
+/* 保存 & 历史 */
+#saveLineup { background:#10b981; color:#fff; padding:.75rem 1.5rem; border:none; border-radius:8px; cursor:pointer; transition:background .3s; display:block; margin:0 auto 1.5rem; }
+#saveLineup:hover { background:#059669; }
+.lineup-list h2 { margin-bottom:.5rem; }
+.lineup-item { padding:.5rem 0; border-bottom:1px solid #e5e7eb; font-size:.95rem; }
+
+/* 模态框 */
+.modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); align-items:center; justify-content:center; }
+.modal.show { display:flex; }
+.modal-content { background:#fff; border-radius:8px; width:90%; max-width:600px; max-height:80%; overflow:auto; padding:1rem; }
+.modal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; }
+.modal-header button { background:none; border:none; font-size:1.5rem; cursor:pointer; }
+
+/* 弹窗内格子 3 列 */
+.modal-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; }
+.card-item, .equip-item { text-align:center; }
+.card-item img, .equip-item img { width:100%; height:140px; object-fit:cover; border-radius:4px; }
+.card-item p { margin:.5rem 0; font-size:.9rem; }
+.card-item button, .equip-item button { background:#3b82f6; color:#fff; border:none; padding:.25rem .5rem; border-radius:4px; cursor:pointer; transition:background .3s; }
+.card-item button:hover, .equip-item button:hover { background:#2563eb; }
