@@ -1,174 +1,123 @@
-let currentRoleIndex = 0;
-let currentCardIndex = 0;
-let currentEquipCardIndex = 0;
-let tempEquipSelection = [];
+let currentSlotType = null; // "role", "card", "equip"
+let currentSlotIndex = null;
 
-// —— 通用 —— 
-function showModal(id)   { document.getElementById(id).classList.add('show'); }
-function hideModal(id)   { document.getElementById(id).classList.remove('show'); }
-
-// —— 角色 —— 
-function openRoleModal(i) {
-  currentRoleIndex = i;
-  renderRoleGrid();
-  showModal('roleModal');
-}
-function closeRoleModal() {
-  hideModal('roleModal');
-}
-function renderRoleGrid() {
-  const kw = document.getElementById('filterRoleName').value.trim().toLowerCase();
-  const grid = document.getElementById('roleModalGrid');
-  grid.innerHTML = '';
-  rolesData
-    .filter(r => r.name.toLowerCase().includes(kw))
-    .forEach(r => {
-      const div = document.createElement('div');
-      div.className = 'role-item';
-      const img = document.createElement('img');
-      img.src = r.image; img.alt = r.name;
-      const p = document.createElement('p'); p.textContent = r.name;
-      const btn = document.createElement('button');
-      btn.textContent = '选择'; btn.onclick = () => {
-        const slot = document.querySelector(`.role-slot[data-index="${currentRoleIndex}"]`);
-        slot.querySelector('img').src = r.image;
-        slot.querySelector('.role-btn').textContent = r.name;
-        closeRoleModal();
-      };
-      div.append(img,p,btn);
-      grid.appendChild(div);
-    });
+function openModal(type, index) {
+  currentSlotType = type;
+  currentSlotIndex = index;
+  document.getElementById(type + 'Modal').classList.add('active');
+  renderGrid(type);
 }
 
-// —— 卡牌 —— 
-function openCardModal(i) {
-  currentCardIndex = i;
-  renderCardGrid();
-  showModal('cardModal');
-}
-function closeCardModal() {
-  hideModal('cardModal');
-}
-function renderCardGrid() {
-  const star = document.getElementById('filterStar').value;
-  const race = document.getElementById('filterRace').value;
-  const grid = document.getElementById('cardModalGrid');
-  grid.innerHTML = '';
-  cardData
-    .filter(c => (!star || c.star===star) && (!race || c.race===race))
-    .forEach(c => {
-      const div = document.createElement('div');
-      div.className = 'card-item';
-      const img = document.createElement('img');
-      img.src = `images/${c.race}/${c.star}/${c.name}.jpg`;
-      img.alt = c.name;
-      const p = document.createElement('p'); p.textContent = c.name;
-      const btn = document.createElement('button');
-      btn.textContent = '选择';
-      btn.onclick = () => {
-        const slot = document.querySelector(`.card-slot[data-index="${currentCardIndex}"]`);
-        slot.querySelector('img').src = img.src;
-        slot.querySelector('.card-btn').textContent = c.name;
-        closeCardModal();
-      };
-      div.append(img,p,btn);
-      grid.appendChild(div);
-    });
+function closeModal(evt) {
+  const modal = evt.currentTarget.closest('.modal');
+  modal.classList.remove('active');
 }
 
-// —— 装备 —— 
-function openEquipModal(i) {
-  currentEquipCardIndex = i;
-  // 读取已选
-  tempEquipSelection = (window.lineupData?.[i]?.equips || []).slice();
-  renderEquipGrid();
-  showModal('equipModal');
-}
-function closeEquipModal() {
-  hideModal('equipModal');
-}
-function renderEquipGrid() {
-  const kw = document.getElementById('filterEquipName').value.trim().toLowerCase();
-  const grid = document.getElementById('equipModalGrid');
-  grid.innerHTML = '';
-  equipData
-    .filter(e => e.name.toLowerCase().includes(kw))
-    .forEach(e => {
-      const div = document.createElement('div');
-      div.className = 'equip-item';
-      const img = document.createElement('img');
-      img.src = e.image; img.alt = e.name;
-      const p = document.createElement('p'); p.textContent = e.name;
-      const btn = document.createElement('button');
-      const selected = tempEquipSelection.includes(e.name);
-      btn.textContent = selected ? '已选' : '选择';
-      btn.onclick = () => {
-        if (tempEquipSelection.includes(e.name)) {
-          tempEquipSelection = tempEquipSelection.filter(x=>x!==e.name);
-        } else {
-          tempEquipSelection.push(e.name);
-        }
-        renderEquipGrid();
-      };
-      div.append(img,p,btn);
-      grid.appendChild(div);
-    });
-}
-function confirmEquipSelection() {
-  // 把选择写回 lineupData
-  window.lineupData = window.lineupData || [];
-  window.lineupData[currentEquipCardIndex] = window.lineupData[currentEquipCardIndex] || {};
-  window.lineupData[currentEquipCardIndex].equips = tempEquipSelection.slice();
-  // 在卡牌位下方显示已选装备数量
-  const slot = document.querySelector(`.card-slot[data-index="${currentEquipCardIndex}"]`);
-  let info = slot.querySelector('.equip-info');
-  if (!info) {
-    info = document.createElement('div');
-    info.className = 'equip-info';
-    slot.appendChild(info);
+function renderGrid(type) {
+  let data = [], grid = null, filter = null;
+  if (type === 'role') {
+    data = rolesData;
+    grid = document.getElementById('roleGrid');
+    filter = document.getElementById('filterRole').value.trim().toLowerCase();
+    data = data.filter(r => r.name.toLowerCase().includes(filter));
   }
-  info.textContent = '装备：' + (tempEquipSelection.length ? tempEquipSelection.join('、') : '未选择');
-  closeEquipModal();
-}
-
-// —— 保存 & 历史阵容 —— 
-function saveLineup() {
-  const roles = Array.from(document.querySelectorAll('.role-slot')).map(s=>s.querySelector('.role-btn').textContent);
-  const cards = Array.from(document.querySelectorAll('.card-slot')).map(s=>s.querySelector('.card-btn').textContent);
-  const equips = window.lineupData ? window.lineupData.map(e=>e.equips||[]) : Array(6).fill([]);
-  const entry = { roles, cards, equips };
-  const all = JSON.parse(localStorage.getItem('lineups')||'[]');
-  all.push(entry);
-  localStorage.setItem('lineups', JSON.stringify(all));
-  renderLineups();
-}
-function renderLineups() {
-  const display = document.getElementById('lineupDisplay');
-  display.innerHTML = '';
-  JSON.parse(localStorage.getItem('lineups')||'[]').forEach((l,i)=>{
-    const div = document.createElement('div');
-    div.className = 'lineup-item';
-    div.textContent = `#${i+1}：角色[${l.roles.join(', ')}]  卡牌[${l.cards.join(', ')}]  装备[${l.equips.map(e=>e.join('/')).join('；')}]`;
-    display.appendChild(div);
+  if (type === 'card') {
+    data = cardData;
+    grid = document.getElementById('cardGrid');
+    const star = document.getElementById('filterStar').value;
+    const race = document.getElementById('filterRace').value;
+    data = data.filter(c => (!star||c.star===star) && (!race||c.race===race));
+  }
+  if (type === 'equip') {
+    data = equipData;
+    grid = document.getElementById('equipGrid');
+    filter = document.getElementById('filterEquip').value.trim().toLowerCase();
+    data = data.filter(e => e.name.toLowerCase().includes(filter));
+  }
+  grid.innerHTML = '';
+  data.forEach(item => {
+    const div = document.createElement('div'); div.className = 'card';
+    const img = document.createElement('img'); img.src = item.image; img.alt = item.name;
+    const p = document.createElement('p'); p.textContent = item.name;
+    const btn = document.createElement('button'); btn.textContent = (type==='equip'?'添加':'选择');
+    btn.onclick = () => selectItem(type, item);
+    div.append(img,p,btn); grid.append(div);
   });
 }
 
-// —— 事件绑定 —— 
-document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('.role-btn').forEach(b=>b.onclick = ()=>openRoleModal(b.dataset.index));
-  document.getElementById('roleModalClose').onclick = closeRoleModal;
-  document.getElementById('filterRoleName').oninput = renderRoleGrid;
+function selectItem(type, item) {
+  if (type==='role') {
+    const slot = document.querySelector(`.role-slot[data-index="${currentSlotIndex}"] .slot-img img`);
+    slot.src = item.image; slot.alt = item.name;
+    document.querySelector(`.role-slot[data-index="${currentSlotIndex}"] button`).textContent = item.name;
+    closeModal({ currentTarget: document.querySelector('#roleModal .close') });
+  }
+  if (type==='card') {
+    const slot = document.querySelector(`.slot[data-index="${currentSlotIndex}"] .slot-img img`);
+    slot.src = item.image; slot.alt = item.name;
+    document.querySelector(`.slot[data-index="${currentSlotIndex}"] button`).textContent = item.name;
+    closeModal({ currentTarget: document.querySelector('#cardModal .close') });
+  }
+  if (type==='equip') {
+    // 装备多选：记录到该卡牌的 data-equip 属性里
+    const slotDiv = document.querySelector(`.slot[data-index="${currentSlotIndex}"]`);
+    let list = slotDiv.dataset.equip? JSON.parse(slotDiv.dataset.equip): [];
+    list.push(item.name);
+    slotDiv.dataset.equip = JSON.stringify(list);
+    // 可以在 UI 上显示已选装备名称列表……
+  }
+}
 
-  document.querySelectorAll('.card-btn').forEach(b=>b.onclick = ()=>openCardModal(b.dataset.index));
-  document.getElementById('cardModalClose').onclick = closeCardModal;
-  document.getElementById('filterStar').onchange = renderCardGrid;
-  document.getElementById('filterRace').onchange = renderCardGrid;
+function saveLineup() {
+  const roles = Array.from(document.querySelectorAll('.role-slot')).map(s=>s.querySelector('button').textContent);
+  const cards = Array.from(document.querySelectorAll('.slot')).map(s=>s.querySelector('button').textContent);
+  const equips = Array.from(document.querySelectorAll('.slot')).map(s=> s.dataset.equip? JSON.parse(s.dataset.equip): []);
+  const lineup = { roles, cards, equips };
+  const stored = JSON.parse(localStorage.getItem('lineups')||'[]');
+  stored.push(lineup);
+  localStorage.setItem('lineups', JSON.stringify(stored));
+  renderHistory();
+}
 
-  document.querySelectorAll('.equip-btn').forEach(b=>b.onclick = ()=>openEquipModal(b.dataset.index));
-  document.getElementById('equipModalClose').onclick = closeEquipModal;
-  document.getElementById('filterEquipName').oninput = renderEquipGrid;
-  document.getElementById('equipConfirmBtn').onclick = confirmEquipSelection;
+function renderHistory() {
+  const list = JSON.parse(localStorage.getItem('lineups')||'[]');
+  const container = document.getElementById('lineupDisplay');
+  container.innerHTML = '';
+  list.forEach((l,i)=>{
+    const div = document.createElement('div'); div.className='item';
+    div.textContent = `#${i+1} 角色：${l.roles.join(', ')} | 卡牌：${l.cards.join(', ')} | 装备：${l.equips.map(e=>e.join('+')).join(' ; ')}`;
+    container.append(div);
+  });
+}
 
+document.addEventListener('DOMContentLoaded',()=>{
+  // 渲染插槽
+  const roleSlots = document.getElementById('roleSlots');
+  for(let i=0;i<2;i++){
+    const div = document.createElement('div'); div.className='slot role-slot'; div.dataset.index=i;
+    div.innerHTML = `<div class="slot-img"><img src="images/placeholder.png"></div>
+                     <button data-index="${i}">选择角色</button>`;
+    roleSlots.append(div);
+  }
+  const cardSlots = document.getElementById('cardSlots');
+  for(let i=0;i<6;i++){
+    const div = document.createElement('div'); div.className='slot'; div.dataset.index=i;
+    div.innerHTML = `<div class="slot-img"><img src="images/placeholder.png"></div>
+                     <button data-index="${i}">选择卡牌</button>
+                     <button class="equip-btn" data-index="${i}">装备</button>`;
+    cardSlots.append(div);
+  }
+
+  // 绑定事件
+  document.querySelectorAll('.role-slot button').forEach(b=>b.onclick=e=>openModal('role',e.target.dataset.index));
+  document.querySelectorAll('.slot button:not(.equip-btn)').forEach(b=>b.onclick=e=>openModal('card',e.target.dataset.index));
+  document.querySelectorAll('.equip-btn').forEach(b=>b.onclick=e=>openModal('equip',e.target.dataset.index));
+
+  document.querySelectorAll('.close').forEach(b=>b.onclick=closeModal);
+  document.getElementById('filterRole').addEventListener('input',()=>renderGrid('role'));
+  document.getElementById('filterEquip').addEventListener('input',()=>renderGrid('equip'));
+  document.getElementById('filterStar').addEventListener('change',()=>renderGrid('card'));
+  document.getElementById('filterRace').addEventListener('change',()=>renderGrid('card'));
   document.getElementById('saveLineup').onclick = saveLineup;
-  renderLineups();
+  renderHistory();
 });
