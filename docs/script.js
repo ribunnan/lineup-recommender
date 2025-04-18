@@ -16,33 +16,32 @@ function renderGrid(type) {
   let data = [], grid, filterVal;
   if (type === 'role') {
     data = rolesData;
-    grid = document.getElementById('roleGrid');
-    filterVal = document.getElementById('filterRole').value.toLowerCase();
+    grid = document.getElementById('roleModalGrid');
+    filterVal = document.getElementById('filterRoleName').value.toLowerCase();
     data = data.filter(r => r.name.toLowerCase().includes(filterVal));
   }
   if (type === 'card') {
     data = cardData;
-    grid = document.getElementById('cardGrid');
+    grid = document.getElementById('cardModalGrid');
     const star = document.getElementById('filterStar').value;
     const race = document.getElementById('filterRace').value;
     data = data.filter(c => (!star || c.star === star) && (!race || c.race === race));
   }
   if (type === 'equip') {
     data = equipData;
-    grid = document.getElementById('equipGrid');
-    filterVal = document.getElementById('filterEquip').value.toLowerCase();
+    grid = document.getElementById('equipModalGrid');
+    filterVal = document.getElementById('filterEquipName').value.toLowerCase();
     data = data.filter(e => e.name.toLowerCase().includes(filterVal));
   }
 
   grid.innerHTML = '';
   data.forEach(item => {
-    // 动态生成图片路径
     let imgSrc;
     if (type === 'role') {
       imgSrc = `images/角色/${item.name}.jpg`;
     } else if (type === 'card') {
       imgSrc = `images/${item.race}/${item.star}/${item.name}.jpg`;
-    } else { // equip
+    } else {
       imgSrc = `images/装备/${item.name}.jpg`;
     }
 
@@ -72,12 +71,10 @@ function selectItem(type, item) {
     closeModal({ currentTarget: { dataset: { modal: 'cardModal' } } });
   }
   if (type === 'equip') {
-    // 多选装备，记录到 data-equip
     const sl = document.querySelector(`.slot[data-index="${currentIndex}"]`);
     let arr = sl.dataset.equip ? JSON.parse(sl.dataset.equip) : [];
     arr.push(item.name);
     sl.dataset.equip = JSON.stringify(arr);
-    // 可以在按钮上显示已添几件
     sl.querySelector('.equip-btn').textContent = `装备 (${arr.length})`;
   }
 }
@@ -110,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const rs = document.getElementById('roleSlots');
   for (let i = 0; i < 2; i++) {
     const d = document.createElement('div');
-    d.className = 'slot role-slot';
+    d.className = 'role-slot';
     d.dataset.index = i;
     d.innerHTML = `
       <div class="slot-img"><img src="images/placeholder.png"></div>
@@ -132,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
     cs.appendChild(d);
   }
 
-  // 绑定打开弹窗
+  // 绑定打开
   document.querySelectorAll('.role-slot button')
     .forEach(b => b.onclick = e => openModal('role', e.target.dataset.index));
   document.querySelectorAll('.slot button:not(.equip-btn)')
@@ -144,12 +141,12 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.close').forEach(b => b.onclick = closeModal);
 
   // 绑定筛选
-  document.getElementById('filterRole').addEventListener('input', () => renderGrid('role'));
-  document.getElementById('filterEquip').addEventListener('input', () => renderGrid('equip'));
+  document.getElementById('filterRoleName').addEventListener('input', () => renderGrid('role'));
+  document.getElementById('filterEquipName').addEventListener('input', () => renderGrid('equip'));
   document.getElementById('filterStar').addEventListener('change', () => renderGrid('card'));
   document.getElementById('filterRace').addEventListener('change', () => renderGrid('card'));
 
-  // 保存并显示历史
+  // 保存历史
   document.getElementById('saveLineup').onclick = saveLineup;
   renderHistory();
 });
