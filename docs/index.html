@@ -1,85 +1,100 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>阵容推荐器</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header><h1>阵容推荐器</h1></header>
+  <header>
+    <h1>阵容推荐器</h1>
+  </header>
+
   <div class="container">
-
     <!-- —— 角色选择 —— -->
-    <section class="role-selection">
-      <h2>本局角色（2位）</h2>
-      <div class="slots role-slots" id="roleSlots"></div>
-    </section>
+    <div class="role-selection">
+      <h2>选择角色（本局两位）</h2>
+      <div class="role-slots" id="roleSlots">
+        <!-- JS 动态生成两个 .role-slot -->
+      </div>
+    </div>
 
-    <!-- —— 卡牌 + 装备 选择 —— -->
-    <section class="card-selection">
-      <h2>卡牌 & 装备（最多6张卡牌，每张可装备多件）</h2>
-      <div class="slots card-slots" id="cardSlots"></div>
-    </section>
+    <!-- —— 卡牌选择 —— -->
+    <div class="lineup-form">
+      <h2>选择卡牌（最多六张）</h2>
+      <div class="card-slots" id="cardSlots">
+        <!-- JS 动态生成六个 .slot -->
+      </div>
+    </div>
 
     <button id="saveLineup">保存阵容</button>
 
-    <section class="history">
-      <h2>历史阵容</h2>
+    <div class="lineup-list">
+      <h2>历史阵容一览</h2>
       <div id="lineupDisplay"></div>
-    </section>
-  </div>
-
-  <!-- —— 弹窗：角色 —— -->
-  <div class="modal" id="roleModal">
-    <div class="modal-box">
-      <header>
-        <h3>选择角色</h3>
-        <button class="close" data-modal="roleModal">&times;</button>
-      </header>
-      <div class="filter">
-        <input type="text" id="filterRole" placeholder="搜索角色">
-      </div>
-      <div class="grid" id="roleGrid"></div>
     </div>
   </div>
 
-  <!-- —— 弹窗：卡牌 —— -->
-  <div class="modal" id="cardModal">
-    <div class="modal-box">
-      <header>
+  <!-- —— 角色弹窗 —— -->
+  <div id="roleModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>选择角色</h3>
+        <button class="close" data-modal="roleModal">&times;</button>
+      </div>
+      <div class="modal-filters">
+        <input type="text" id="filterRoleName" placeholder="输入角色名称关键字" />
+      </div>
+      <div class="modal-grid" id="roleModalGrid"></div>
+    </div>
+  </div>
+
+  <!-- —— 卡牌弹窗 —— -->
+  <div id="cardModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
         <h3>选择卡牌</h3>
         <button class="close" data-modal="cardModal">&times;</button>
-      </header>
-      <div class="filter">
+      </div>
+      <div class="modal-filters">
         <select id="filterStar">
           <option value="">全部星级</option>
-          <option>1星</option><option>2星</option><option>3星</option>
-          <option>4星</option><option>5星</option><option>6星</option>
+          <option value="1星">1 星</option>
+          <option value="2星">2 星</option>
+          <option value="3星">3 星</option>
+          <option value="4星">4 星</option>
+          <option value="5星">5 星</option>
+          <option value="6星">6 星</option>
         </select>
         <select id="filterRace">
           <option value="">全部种族</option>
-          <option>龙</option><option>中立</option><option>幽灵</option>
-          <option>战士</option><option>星裔</option>
-          <option>机械</option><option>自然</option><option>野兽</option>
+          <option value="龙">龙</option>
+          <option value="中立">中立</option>
+          <option value="幽灵">幽灵</option>
+          <option value="战士">战士</option>
+          <option value="星裔">星裔</option>
+          <option value="机械">机械</option>
+          <option value="自然">自然</option>
+          <option value="野兽">野兽</option>
         </select>
       </div>
-      <div class="grid" id="cardGrid"></div>
+      <div class="modal-grid" id="cardModalGrid"></div>
     </div>
   </div>
 
-  <!-- —— 弹窗：装备 —— -->
-  <div class="modal" id="equipModal">
-    <div class="modal-box">
-      <header>
+  <!-- —— 装备弹窗 —— -->
+  <div id="equipModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
         <h3>选择装备</h3>
         <button class="close" data-modal="equipModal">&times;</button>
-      </header>
-      <div class="filter">
-        <input type="text" id="filterEquip" placeholder="搜索装备">
       </div>
-      <div class="grid" id="equipGrid"></div>
+      <div class="modal-filters">
+        <input type="text" id="filterEquipName" placeholder="输入装备名称关键字" />
+      </div>
+      <div class="modal-grid" id="equipModalGrid"></div>
     </div>
   </div>
 
