@@ -1,101 +1,94 @@
+/* --- 全局重置 & 字体 --- */
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Inter', sans-serif; background-color: #f9fafb; color: #333; line-height: 1.6; }
+body { font-family: 'Inter', sans-serif; background-color: #f9fafb; color: #333; line-height: 1.4; }
 header { background: #fff; padding: 1.5rem; text-align: center; border-bottom: 1px solid #e5e7eb; }
 header h1 { font-size: 2rem; }
+
+/* --- 布局容器 --- */
 .container { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
 
-.role-slots { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 2rem; }
-.card-slots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1rem; }
+/* --- 角色选择 --- */
+.role-selection h2 { margin-bottom: 1rem; }
+.role-slots { display: grid; grid-template-columns: repeat(2,1fr); gap: 1rem; margin-bottom: 2rem; }
 
+/* --- 卡牌选择 --- */
+.card-selection h2 { margin-bottom: 1rem; }
+.card-slots { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; margin-bottom: 1.5rem; }
+
+/* --- 每个槽位 --- */
 .slot, .role-slot { text-align: center; }
-.slot-img {
-  width: 100%;
-  padding-top: 75%;
-  position: relative;
-  background: #f3f4f6;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  overflow: hidden;
-  margin-bottom: 0.5rem;
-}
-.slot-img img {
-  position: absolute;
-  top: 0; left: 0; width: 100%; height: 100%;
-  object-fit: contain;
-}
-
+.slot-img { width: 140px; height: 140px; margin: 0 auto 0.5rem; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; background: #f3f4f6; }
+.slot-img img { width: 100%; height: 100%; object-fit: contain; }
+.slot-actions { display: flex; justify-content: center; gap: 0.5rem; margin-top: 0.5rem; }
 .slot-btn, .role-btn, .equip-btn {
-  display: block;
-  width: 100%;
-  margin-bottom: 0.5rem;
-  background: #3b82f6;
-  color: #fff;
-  border: none;
-  padding: 0.5rem;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.3s;
+  background: #3b82f6; color: #fff; border: none; padding: 0.5rem 1rem;
+  border-radius: 8px; cursor: pointer; transition: background 0.3s;
 }
 .slot-btn:hover, .role-btn:hover, .equip-btn:hover { background: #2563eb; }
 
-.equip-list { font-size: 0.85rem; min-height: 1.2em; }
-
+/* --- 保存 & 历史阵容 --- */
 #saveLineup {
-  background: #10b981;
-  color: #fff;
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  display: block;
-  margin: 0 auto 1.5rem;
-  transition: background 0.3s;
+  background: #10b981; color: #fff; padding: 0.75rem 1.5rem;
+  border: none; border-radius: 8px; cursor: pointer; transition: background 0.3s;
+  display: block; margin: 0 auto 2rem;
 }
 #saveLineup:hover { background: #059669; }
-
 .lineup-list h2 { margin-bottom: 0.5rem; }
 .lineup-item { padding: 0.5rem 0; border-bottom: 1px solid #e5e7eb; font-size: 0.95rem; }
 
-/* Modal */
+/* --- 通用弹窗 & 内容 --- */
 .modal {
-  display: none;
-  position: fixed; top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.5);
-  align-items: center; justify-content: center;
-  overflow: auto;
+  display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5); align-items: center; justify-content: center;
 }
 .modal.show { display: flex; }
 .modal-content {
-  background: #fff;
-  border-radius: 8px;
-  width: 90%; max-width: 600px;
-  max-height: 90%; overflow-y: auto;
-  position: relative;
-  padding-top: 3rem;
+  background: #fff; border-radius: 8px; width: 90%; max-width: 600px;
+  max-height: 90%; display: flex; flex-direction: column; overflow: hidden;
 }
 .modal-header {
-  position: sticky; top: 0;
-  display: flex; justify-content: space-between; align-items: center;
-  background: #fff; padding: 0.5rem 1rem; border-bottom: 1px solid #e5e7eb; z-index: 10;
+  position: sticky; top: 0; background: #fff; padding: 0.75rem 1rem;
+  display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e5e7eb;
+  z-index: 10;
 }
 .modal-header h3 { margin: 0; }
 .modal-header button { background: none; border: none; font-size: 1.5rem; cursor: pointer; }
 
-.modal-filters { display: flex; gap: 1rem; padding: 0.5rem 1rem; }
+.modal-filters {
+  padding: 0.75rem 1rem; display: flex; gap: 1rem; border-bottom: 1px solid #e5e7eb;
+}
 .modal-filters input, .modal-filters select {
-  flex: 1; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 8px; background: #fff;
+  flex: 1; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 6px;
 }
 
 .modal-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; padding: 1rem;
+  padding: 1rem; display: grid; gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(120px,1fr));
+  overflow-y: auto;
+  flex: 1;
 }
-.card-item img, .role-item img, .equip-item img {
-  width: 100%; height: 120px; object-fit: contain; border-radius: 4px;
+.modal-grid .card-item,
+.modal-grid .role-item,
+.modal-grid .equip-item {
+  display: flex; flex-direction: column; align-items: center; text-align: center;
 }
-.card-item p, .role-item p, .equip-item p { margin: 0.5rem 0; font-size: 0.9rem; }
-.card-item button, .role-item button, .equip-item button {
-  background: #3b82f6; color: #fff; border: none; padding: 0.25rem 0.5rem;
-  border-radius: 4px; cursor: pointer; transition: background 0.3s;
+.modal-grid img {
+  width: 100px; height: 100px; object-fit: contain; border-radius: 4px;
 }
-.card-item button:hover, .role-item button:hover, .equip-item button:hover { background: #2563eb; }
+.modal-grid p { margin: 0.5rem 0; font-size: 0.9rem; }
+.modal-grid button {
+  background: #3b82f6; color: #fff; border: none;
+  padding: 0.3rem 0.6rem; border-radius: 4px; cursor: pointer;
+  transition: background 0.3s; font-size: 0.85rem;
+}
+.modal-grid button:hover { background: #2563eb; }
+
+/* --- 装备弹窗底部完成按钮 --- */
+.modal-footer {
+  padding: 0.75rem 1rem; border-top: 1px solid #e5e7eb; text-align: right;
+}
+.modal-footer button {
+  background: #10b981; color: #fff; border: none; padding: 0.5rem 1rem;
+  border-radius: 6px; cursor: pointer; transition: background 0.3s;
+}
+.modal-footer button:hover { background: #059669; }
