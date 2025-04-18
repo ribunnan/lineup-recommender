@@ -1,43 +1,234 @@
-* { box-sizing:border-box; margin:0; padding:0; }
-body { font-family:'Inter',sans-serif; background:#f9fafb; color:#333; line-height:1.6; }
-header { background:#fff; padding:1.5rem; text-align:center; border-bottom:1px solid #e5e7eb; }
-h1 { font-size:2rem; font-weight:600; }
-.container { max-width:900px; margin:2rem auto; padding:0 1rem; }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-/* 角色 & 卡牌 布局 */
-.role-slots, .card-slots { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:1.5rem; }
-.slot, .role-slot { text-align:center; }
-.slot-img { width:120px; height:120px; margin:0 auto .5rem; border:1px solid #e5e7eb; border-radius:8px; overflow:hidden; background:#f3f4f6; }
-.slot-img img { width:100%; height:100%; object-fit:cover; }
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #f9fafb;
+  color: #333;
+  line-height: 1.6;
+}
 
-/* 按钮 */
-.slot-btn, .role-btn, .equip-btn { background:#3b82f6; color:#fff; border:none; padding:.5rem; border-radius:8px; cursor:pointer; transition:background .3s; }
-.slot-btn:hover, .role-btn:hover { background:#2563eb; }
-.equip-btn { background:#f59e0b; }
-.equip-btn:hover { background:#d97706; }
+header {
+  background: #fff;
+  padding: 1.5rem;
+  text-align: center;
+  border-bottom: 1px solid #e5e7eb;
+}
 
-/* 装备小图预览 */
-.equip-list { display:flex; flex-wrap:wrap; gap:.5rem; margin-top:.5rem; justify-content:center; }
-.equip-list .equip-item { width:50px; text-align:center; }
-.equip-list .equip-item img { width:100%; height:50px; object-fit:cover; border-radius:4px; }
+header h1 {
+  font-size: 2rem;
+}
 
-/* 保存 & 历史 */
-#saveLineup { background:#10b981; color:#fff; padding:.75rem 1.5rem; border:none; border-radius:8px; cursor:pointer; transition:background .3s; display:block; margin:0 auto 1.5rem; }
-#saveLineup:hover { background:#059669; }
-.lineup-list h2 { margin-bottom:.5rem; }
-.lineup-item { padding:.5rem 0; border-bottom:1px solid #e5e7eb; font-size:.95rem; }
+.container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+/* 角色和卡牌布局 */
+.role-slots,
+.card-slots {
+  display: grid;
+  gap: 1rem;
+}
+
+.role-slots {
+  grid-template-columns: repeat(2, 1fr);
+  margin-bottom: 2rem;
+}
+
+.card-slots {
+  grid-template-columns: repeat(3, 1fr);
+  margin-bottom: 1rem;
+}
+
+.slot, .role-slot {
+  text-align: center;
+}
+
+.slot-img {
+  width: 100%;
+  padding-top: 75%;
+  position: relative;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.slot-img img {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  object-fit: contain; /* ← 完整显示 */
+}
+
+.slot-btn,
+.role-btn,
+.equip-btn {
+  display: block;
+  width: 100%;
+  margin-bottom: 0.5rem;
+  background: #3b82f6;
+  color: #fff;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.slot-btn:hover,
+.role-btn:hover,
+.equip-btn:hover {
+  background: #2563eb;
+}
+
+.equip-list {
+  font-size: 0.85rem;
+  min-height: 1.2em;
+}
+
+/* 保存按钮 */
+#saveLineup {
+  background: #10b981;
+  color: #fff;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+  display: block;
+  margin: 0 auto 1.5rem;
+}
+
+#saveLineup:hover {
+  background: #059669;
+}
+
+.lineup-list h2 {
+  margin-bottom: 0.5rem;
+}
+
+.lineup-item {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 0.95rem;
+}
 
 /* 模态框 */
-.modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); align-items:center; justify-content:center; }
-.modal.show { display:flex; }
-.modal-content { background:#fff; border-radius:8px; width:90%; max-width:600px; max-height:80%; overflow:auto; padding:1rem; }
-.modal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; }
-.modal-header button { background:none; border:none; font-size:1.5rem; cursor:pointer; }
+.modal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+}
 
-/* 弹窗内格子 3 列 */
-.modal-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; }
-.card-item, .equip-item { text-align:center; }
-.card-item img, .equip-item img { width:100%; height:140px; object-fit:cover; border-radius:4px; }
-.card-item p { margin:.5rem 0; font-size:.9rem; }
-.card-item button, .equip-item button { background:#3b82f6; color:#fff; border:none; padding:.25rem .5rem; border-radius:4px; cursor:pointer; transition:background .3s; }
-.card-item button:hover, .equip-item button:hover { background:#2563eb; }
+.modal.show {
+  display: flex;
+}
+
+.modal-content {
+  background: #fff;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90%;
+  overflow-y: auto;
+  position: relative;
+  padding-top: 3rem; /* 为 sticky header 留空间 */
+}
+
+.modal-header {
+  position: sticky;
+  top: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid #e5e7eb;
+  z-index: 10; /* 保证浮在最上面 */
+}
+
+.modal-header h3 {
+  margin: 0;
+}
+
+.modal-header button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+/* 过滤器 */
+.modal-filters {
+  display: flex;
+  gap: 1rem;
+  padding: 0.5rem 1rem;
+}
+
+.modal-filters input,
+.modal-filters select {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #fff;
+}
+
+/* 弹窗里的网格 */
+.modal-grid {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.card-item,
+.role-item,
+.equip-item {
+  text-align: center;
+}
+
+.card-item img,
+.role-item img,
+.equip-item img {
+  width: 100%;
+  height: 120px;
+  object-fit: contain; /* ← 完整显示 */
+  border-radius: 4px;
+}
+
+.card-item p,
+.role-item p,
+.equip-item p {
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+}
+
+.card-item button,
+.role-item button,
+.equip-item button {
+  background: #3b82f6;
+  color: #fff;
+  border: none;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.card-item button:hover,
+.role-item button:hover,
+.equip-item button:hover {
+  background: #2563eb;
+}
