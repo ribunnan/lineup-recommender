@@ -10,24 +10,28 @@
 <body>
   <header><h1>阵容推荐器</h1></header>
   <div class="container">
-    <!-- 角色选择 -->
+
+    <!-- —— 角色选择 —— -->
     <section class="role-selection">
       <h2>本局角色（2位）</h2>
       <div class="slots role-slots" id="roleSlots"></div>
     </section>
-    <!-- 卡牌 + 装备选择 -->
+
+    <!-- —— 卡牌 + 装备 选择 —— -->
     <section class="card-selection">
       <h2>卡牌 & 装备（最多6张卡牌，每张可装备多件）</h2>
       <div class="slots card-slots" id="cardSlots"></div>
     </section>
+
     <button id="saveLineup">保存阵容</button>
+
     <section class="history">
       <h2>历史阵容</h2>
       <div id="lineupDisplay"></div>
     </section>
   </div>
 
-  <!-- 弹窗：角色 -->
+  <!-- —— 弹窗：角色 —— -->
   <div class="modal" id="roleModal">
     <div class="modal-box">
       <header>
@@ -41,7 +45,7 @@
     </div>
   </div>
 
-  <!-- 弹窗：卡牌 -->
+  <!-- —— 弹窗：卡牌 —— -->
   <div class="modal" id="cardModal">
     <div class="modal-box">
       <header>
@@ -49,11 +53,13 @@
         <button class="close" data-modal="cardModal">&times;</button>
       </header>
       <div class="filter">
-        <select id="filterStar"><option value="">全部星级</option>
+        <select id="filterStar">
+          <option value="">全部星级</option>
           <option>1星</option><option>2星</option><option>3星</option>
           <option>4星</option><option>5星</option><option>6星</option>
         </select>
-        <select id="filterRace"><option value="">全部种族</option>
+        <select id="filterRace">
+          <option value="">全部种族</option>
           <option>龙</option><option>中立</option><option>幽灵</option>
           <option>战士</option><option>星裔</option>
           <option>机械</option><option>自然</option><option>野兽</option>
@@ -63,7 +69,7 @@
     </div>
   </div>
 
-  <!-- 弹窗：装备 -->
+  <!-- —— 弹窗：装备 —— -->
   <div class="modal" id="equipModal">
     <div class="modal-box">
       <header>
