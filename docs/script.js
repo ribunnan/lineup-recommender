@@ -1,22 +1,19 @@
 // script.js
 
-// 简易 DOM 查询辅助
+// 简易 DOM 查询
 function $(sel) { return document.querySelector(sel); }
 function $all(sel) { return Array.from(document.querySelectorAll(sel)); }
 
-// 当前操作的槽位
 let currentRoleSlot = null;
 let currentCardSlot = null;
 let currentEquipSlot = null;
-
-// 每个卡牌槽位对应的已选装备列表
-const equipSelections = {}; // { slotIndex: [equipObj, …] }
+const equipSelections = {}; // { slotIndex: [equipObj,…] }
 
 // 打开/关闭弹窗
 function openModal(id) { $(id).classList.add('show'); }
 function closeModal(id) { $(id).classList.remove('show'); }
 
-// —— 角色弹窗 —— //
+// 渲染——角色弹窗
 function renderRoleModal() {
   const kw = $('#filterRoleName').value.trim().toLowerCase();
   const grid = $('#roleModalGrid');
@@ -41,7 +38,7 @@ function renderRoleModal() {
     });
 }
 
-// —— 卡牌弹窗 —— //
+// 渲染——卡牌弹窗
 function renderCardModal() {
   const star = $('#filterStar').value;
   const race = $('#filterRace').value;
@@ -68,7 +65,7 @@ function renderCardModal() {
     });
 }
 
-// —— 装备弹窗 —— //
+// 渲染——装备弹窗
 function renderEquipModal() {
   const kw = $('#filterEquipName').value.trim().toLowerCase();
   const sel = equipSelections[currentEquipSlot] = equipSelections[currentEquipSlot] || [];
@@ -78,6 +75,7 @@ function renderEquipModal() {
     const img = document.createElement('img');
     img.src = e.image;
     img.title = e.name;
+    img.className = 'selected-equip';
     top.appendChild(img);
   });
 
@@ -102,25 +100,23 @@ function renderEquipModal() {
     });
 }
 
-// —— 保存阵容 —— //
+// 保存阵容
 function saveLineup() {
   console.log('▶ saveLineup 被调用');
-  alert('🔖 正在保存阵容…');
-  const records = JSON.parse(localStorage.getItem('lineups') || '[]');
-
+  // 将旧数据全部替换为新结构
+  const records = [];
   const roles = $all('.role-slot').map(s => s.querySelector('button').textContent);
   const cards = $all('.slot').map(s => ({
     name: s.querySelector('.slot-btn').textContent,
     equips: (equipSelections[s.dataset.index] || []).map(e => e.name)
   }));
-
   records.push({ roles, cards });
   localStorage.setItem('lineups', JSON.stringify(records));
   renderLineups();
   alert('✅ 阵容已保存');
 }
 
-// —— 渲染历史阵容 —— //
+// 渲染历史
 function renderLineups() {
   const display = $('#lineupDisplay');
   display.innerHTML = '';
@@ -129,36 +125,38 @@ function renderLineups() {
     const row = document.createElement('div');
     row.className = 'history-row';
     // 角色
-    rec.roles.forEach(r => {
-      row.innerHTML += `
-        <div class="history-img">
-          <img src="images/角色/${r}.jpg" alt="${r}">
-          <p>${r}</p>
-        </div>`;
-    });
-    // 卡牌 + 装备
-    rec.cards.forEach(c => {
-      // 卡牌图
-      const cd = cardData.find(x => x.name === c.name) || {};
-      const imgPath = cd.race && cd.star
-        ? `images/${cd.race}/${cd.star}/${c.name}.jpg`
-        : 'images/placeholder.png';
-      row.innerHTML += `
-        <div class="history-img">
-          <img src="${imgPath}" alt="${c.name}">
-          <p>${c.name}</p>
-      `;
-      // 装备图
-      c.equips.forEach(eq => {
-        row.innerHTML += `<img class="history-equip" src="images/装备/${eq}.jpg" title="${eq}">`;
+    if (Array.isArray(rec.roles)) {
+      rec.roles.forEach(r => {
+        row.innerHTML += `
+          <div class="history-img">
+            <img src="images/角色/${r}.jpg" alt="${r}">
+            <p>${r}</p>
+          </div>`;
       });
-      row.innerHTML += `</div>`;
-    });
+    }
+    // 卡牌 + 装备
+    if (Array.isArray(rec.cards)) {
+      rec.cards.forEach(c => {
+        // 找到卡牌的路径
+        const cd = cardData.find(x => x.name === c.name) || {};
+        const imgPath = cd.race && cd.star
+          ? `images/${cd.race}/${cd.star}/${c.name}.jpg`
+          : 'images/placeholder.png';
+        row.innerHTML += `
+          <div class="history-img">
+            <img src="${imgPath}" alt="${c.name}">
+            <p>${c.name}</p>`;
+        (c.equips || []).forEach(eq => {
+          row.innerHTML += `<img class="history-equip" src="images/装备/${eq}.jpg" title="${eq}">`;
+        });
+        row.innerHTML += `</div>`;
+      });
+    }
     display.appendChild(row);
   });
 }
 
-// —— 事件绑定 —— //
+// 事件绑定
 document.addEventListener('DOMContentLoaded', () => {
   // 角色
   $all('.role-btn').forEach(btn => {
@@ -197,6 +195,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // 保存
   $('#saveLineup').addEventListener('click', saveLineup);
 
-  // 首次渲染历史
+  // 首次渲染
   renderLineups();
 });
