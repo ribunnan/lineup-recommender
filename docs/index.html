@@ -32,30 +32,14 @@
     <div class="lineup-form" id="lineupForm">
       <h2>选择卡牌（最多六张）</h2>
       <div class="card-slots">
-        <div class="slot" data-index="0">
-          <div class="slot-img"><img src="images/placeholder.png" alt="卡牌0" /></div>
-          <button class="slot-btn" data-index="0">选择卡牌</button>
+        <!-- 重复 6 次 -->
+        ${[0,1,2,3,4,5].map(i=>`
+        <div class="slot" data-index="${i}">
+          <div class="slot-img"><img src="images/placeholder.png" alt="卡牌${i}" /></div>
+          <button class="slot-btn" data-index="${i}">选择卡牌</button>
+          <button class="equip-btn" data-index="${i}">选择装备</button>
         </div>
-        <div class="slot" data-index="1">
-          <div class="slot-img"><img src="images/placeholder.png" alt="卡牌1" /></div>
-          <button class="slot-btn" data-index="1">选择卡牌</button>
-        </div>
-        <div class="slot" data-index="2">
-          <div class="slot-img"><img src="images/placeholder.png" alt="卡牌2" /></div>
-          <button class="slot-btn" data-index="2">选择卡牌</button>
-        </div>
-        <div class="slot" data-index="3">
-          <div class="slot-img"><img src="images/placeholder.png" alt="卡牌3" /></div>
-          <button class="slot-btn" data-index="3">选择卡牌</button>
-        </div>
-        <div class="slot" data-index="4">
-          <div class="slot-img"><img src="images/placeholder.png" alt="卡牌4" /></div>
-          <button class="slot-btn" data-index="4">选择卡牌</button>
-        </div>
-        <div class="slot" data-index="5">
-          <div class="slot-img"><img src="images/placeholder.png" alt="卡牌5" /></div>
-          <button class="slot-btn" data-index="5">选择卡牌</button>
-        </div>
+        `).join('')}
       </div>
     </div>
 
@@ -129,8 +113,8 @@
     </div>
   </div>
 
-  <script src="cardData.js"></script>
   <script src="rolesData.js"></script>
+  <script src="cardData.js"></script>
   <script src="equipData.js"></script>
   <script src="script.js"></script>
 </body>
