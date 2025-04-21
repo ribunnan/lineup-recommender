@@ -1,99 +1,88 @@
-// script.js
+// 简易选择器
+function $(s){return document.querySelector(s);}
+function $all(s){return Array.from(document.querySelectorAll(s));}
 
-// 简易 DOM 查询
-function $(sel) { return document.querySelector(sel); }
-function $all(sel) { return Array.from(document.querySelectorAll(sel)); }
-
-let currentRoleSlot = null;
-let currentCardSlot = null;
-let currentEquipSlot = null;
+let currentRoleSlot, currentCardSlot, currentEquipSlot;
 const equipSelections = {}; // { slotIndex: [equipObj,…] }
 
 // 打开/关闭弹窗
-function openModal(id) { $(id).classList.add('show'); }
-function closeModal(id) { $(id).classList.remove('show'); }
+function openModal(id){$(id).classList.add('show');}
+function closeModal(id){$(id).classList.remove('show');}
 
-// 渲染——角色弹窗
-function renderRoleModal() {
-  const kw = $('#filterRoleName').value.trim().toLowerCase();
+// 渲染角色弹窗
+function renderRoleModal(){
+  const kw = $('#filterRoleName').value.toLowerCase();
   const grid = $('#roleModalGrid');
   grid.innerHTML = '';
   rolesData
-    .filter(r => !kw || r.name.toLowerCase().includes(kw))
-    .forEach(r => {
-      const d = document.createElement('div');
-      d.className = 'role-item';
-      d.innerHTML = `
+    .filter(r=>!kw||r.name.toLowerCase().includes(kw))
+    .forEach(r=>{
+      const d=document.createElement('div'); d.className='role-item';
+      d.innerHTML=`
         <img src="${r.image}" alt="${r.name}">
         <p>${r.name}</p>
         <button>选择</button>
       `;
-      d.querySelector('button').onclick = () => {
-        const slot = document.querySelector(`.role-slot[data-index="${currentRoleSlot}"]`);
-        slot.querySelector('img').src = r.image;
-        slot.querySelector('button').textContent = r.name;
+      d.querySelector('button').onclick=()=>{
+        const slot=$(`.role-slot[data-index="${currentRoleSlot}"]`);
+        slot.querySelector('img').src=r.image;
+        slot.querySelector('button').textContent=r.name;
         closeModal('#roleModal');
       };
       grid.appendChild(d);
     });
 }
 
-// 渲染——卡牌弹窗
-function renderCardModal() {
-  const star = $('#filterStar').value;
-  const race = $('#filterRace').value;
-  const grid = $('#cardModalGrid');
-  grid.innerHTML = '';
+// 渲染卡牌弹窗
+function renderCardModal(){
+  const star=$('#filterStar').value, race=$('#filterRace').value;
+  const grid=$('#cardModalGrid');
+  grid.innerHTML='';
   cardData
-    .filter(c => (!star || c.star === star) && (!race || c.race === race))
-    .forEach(c => {
-      const imgPath = `images/${c.race}/${c.star}/${c.name}.jpg`;
-      const d = document.createElement('div');
-      d.className = 'card-item';
-      d.innerHTML = `
+    .filter(c=>(!star||c.star===star)&&(!race||c.race===race))
+    .forEach(c=>{
+      const imgPath=`images/${c.race}/${c.star}/${c.name}.jpg`;
+      const d=document.createElement('div'); d.className='card-item';
+      d.innerHTML=`
         <img src="${imgPath}" alt="${c.name}">
         <p>${c.name}</p>
         <button>选择</button>
       `;
-      d.querySelector('button').onclick = () => {
-        const slot = document.querySelector(`.slot[data-index="${currentCardSlot}"]`);
-        slot.querySelector('img').src = imgPath;
-        slot.querySelector('.slot-btn').textContent = c.name;
+      d.querySelector('button').onclick=()=>{
+        const slot=$(`.slot[data-index="${currentCardSlot}"]`);
+        slot.querySelector('img').src=imgPath;
+        slot.querySelector('.slot-btn').textContent=c.name;
         closeModal('#cardModal');
       };
       grid.appendChild(d);
     });
 }
 
-// 渲染——装备弹窗
-function renderEquipModal() {
-  const kw = $('#filterEquipName').value.trim().toLowerCase();
-  const sel = equipSelections[currentEquipSlot] = equipSelections[currentEquipSlot] || [];
-  const top = $('#selectedEquips');
-  top.innerHTML = '';
-  sel.forEach(e => {
-    const img = document.createElement('img');
-    img.src = e.image;
-    img.title = e.name;
-    img.className = 'selected-equip';
+// 渲染装备弹窗
+function renderEquipModal(){
+  const kw=$('#filterEquipName').value.toLowerCase();
+  const sel=equipSelections[currentEquipSlot]||(equipSelections[currentEquipSlot]=[]);
+  // 已选栏
+  const top=$('#selectedEquips'); top.innerHTML='';
+  sel.forEach(e=>{
+    const img=document.createElement('img');
+    img.src=e.image; img.title=e.name; img.className='selected-equip';
     top.appendChild(img);
   });
-
-  const grid = $('#equipModalGrid');
-  grid.innerHTML = '';
+  // 列表
+  const grid=$('#equipModalGrid'); grid.innerHTML='';
   equipData
-    .filter(e => !kw || e.name.toLowerCase().includes(kw))
-    .forEach(e => {
-      const chosen = sel.some(x => x.name === e.name);
-      const d = document.createElement('div');
-      d.className = 'equip-item';
-      d.innerHTML = `
+    .filter(e=>!kw||e.name.toLowerCase().includes(kw))
+    .forEach(e=>{
+      const chosen=sel.some(x=>x.name===e.name);
+      const d=document.createElement('div'); d.className='equip-item';
+      d.innerHTML=`
         <img src="${e.image}" alt="${e.name}">
         <p>${e.name}</p>
-        <button>${chosen ? '已选' : '选择'}</button>
+        <button>${chosen?'已选':'选择'}</button>
       `;
-      d.querySelector('button').onclick = () => {
-        if (!chosen) sel.push(e);
+      d.querySelector('button').onclick=()=>{
+        if(!chosen) sel.push(e);
         renderEquipModal();
       };
       grid.appendChild(d);
@@ -101,99 +90,70 @@ function renderEquipModal() {
 }
 
 // 保存阵容
-function saveLineup() {
-  console.log('▶ saveLineup 被调用');
-  // 将旧数据全部替换为新结构
-  const records = [];
-  const roles = $all('.role-slot').map(s => s.querySelector('button').textContent);
-  const cards = $all('.slot').map(s => ({
-    name: s.querySelector('.slot-btn').textContent,
-    equips: (equipSelections[s.dataset.index] || []).map(e => e.name)
+function saveLineup(){
+  const roles=$all('.role-slot').map(s=>s.querySelector('button').textContent);
+  const cards=$all('.slot').map(s=>({
+    name:s.querySelector('.slot-btn').textContent,
+    equips:(equipSelections[s.dataset.index]||[]).map(e=>e.name)
   }));
-  records.push({ roles, cards });
-  localStorage.setItem('lineups', JSON.stringify(records));
+  // 覆盖写入
+  localStorage.setItem('lineups', JSON.stringify([{roles,cards}]));
   renderLineups();
   alert('✅ 阵容已保存');
 }
 
-// 渲染历史
-function renderLineups() {
-  const display = $('#lineupDisplay');
-  display.innerHTML = '';
-  const records = JSON.parse(localStorage.getItem('lineups') || '[]');
-  records.forEach((rec, i) => {
-    const row = document.createElement('div');
-    row.className = 'history-row';
+// 渲染历史列表
+function renderLineups(){
+  const display=$('#lineupDisplay'); display.innerHTML='';
+  const records=JSON.parse(localStorage.getItem('lineups')||'[]');
+  records.forEach(rec=>{
+    const row=document.createElement('div'); row.className='history-row';
     // 角色
-    if (Array.isArray(rec.roles)) {
-      rec.roles.forEach(r => {
-        row.innerHTML += `
-          <div class="history-img">
-            <img src="images/角色/${r}.jpg" alt="${r}">
-            <p>${r}</p>
-          </div>`;
-      });
-    }
-    // 卡牌 + 装备
-    if (Array.isArray(rec.cards)) {
-      rec.cards.forEach(c => {
-        // 找到卡牌的路径
-        const cd = cardData.find(x => x.name === c.name) || {};
-        const imgPath = cd.race && cd.star
-          ? `images/${cd.race}/${cd.star}/${c.name}.jpg`
-          : 'images/placeholder.png';
-        row.innerHTML += `
-          <div class="history-img">
-            <img src="${imgPath}" alt="${c.name}">
-            <p>${c.name}</p>`;
-        (c.equips || []).forEach(eq => {
-          row.innerHTML += `<img class="history-equip" src="images/装备/${eq}.jpg" title="${eq}">`;
-        });
-        row.innerHTML += `</div>`;
-      });
-    }
+    Array.isArray(rec.roles)&&rec.roles.forEach(r=>{
+      const div=document.createElement('div'); div.className='history-img';
+      div.innerHTML=`<img src="images/角色/${r}.jpg" alt="${r}"><p>${r}</p>`;
+      row.appendChild(div);
+    });
+    // 卡牌
+    Array.isArray(rec.cards)&&rec.cards.forEach(c=>{
+      const cd=cardData.find(x=>x.name===c.name)||{};
+      const imgPath=cd.race&&cd.star
+        ?`images/${cd.race}/${cd.star}/${c.name}.jpg`
+        :'images/placeholder.png';
+      const div=document.createElement('div'); div.className='history-img';
+      div.innerHTML=`<img src="${imgPath}" alt="${c.name}"><p>${c.name}</p>`;
+      row.appendChild(div);
+    });
     display.appendChild(row);
   });
 }
 
 // 事件绑定
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded',()=>{
   // 角色
-  $all('.role-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      currentRoleSlot = btn.dataset.index;
-      openModal('#roleModal');
-      renderRoleModal();
-    });
+  $all('.role-btn').forEach(btn=>{
+    btn.onclick=()=>{ currentRoleSlot=btn.dataset.index; openModal('#roleModal'); renderRoleModal(); };
   });
-  $('#roleModalClose').addEventListener('click', () => closeModal('#roleModal'));
-  $('#filterRoleName').addEventListener('input', renderRoleModal);
+  $('#roleModalClose').onclick=()=>closeModal('#roleModal');
+  $('#filterRoleName').oninput=renderRoleModal;
 
   // 卡牌
-  $all('.slot-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      currentCardSlot = btn.dataset.index;
-      openModal('#cardModal');
-      renderCardModal();
-    });
+  $all('.slot-btn').forEach(btn=>{
+    btn.onclick=()=>{ currentCardSlot=btn.dataset.index; openModal('#cardModal'); renderCardModal(); };
   });
-  $('#cardModalClose').addEventListener('click', () => closeModal('#cardModal'));
-  $('#filterStar').addEventListener('change', renderCardModal);
-  $('#filterRace').addEventListener('change', renderCardModal);
+  $('#cardModalClose').onclick=()=>closeModal('#cardModal');
+  $('#filterStar').onchange=renderCardModal;
+  $('#filterRace').onchange=renderCardModal;
 
   // 装备
-  $all('.equip-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      currentEquipSlot = btn.dataset.index;
-      openModal('#equipModal');
-      renderEquipModal();
-    });
+  $all('.equip-btn').forEach(btn=>{
+    btn.onclick=()=>{ currentEquipSlot=btn.dataset.index; openModal('#equipModal'); renderEquipModal(); };
   });
-  $('#equipModalClose').addEventListener('click', () => closeModal('#equipModal'));
-  $('#filterEquipName').addEventListener('input', renderEquipModal);
+  $('#equipModalClose').onclick=()=>closeModal('#equipModal');
+  $('#filterEquipName').oninput=renderEquipModal;
 
   // 保存
-  $('#saveLineup').addEventListener('click', saveLineup);
+  $('#saveLineup').onclick=saveLineup;
 
   // 首次渲染
   renderLineups();
