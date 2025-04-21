@@ -1,105 +1,73 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Inter', sans-serif; background-color: #f9fafb; color: #333; line-height: 1.6; }
+body { font-family: 'Inter', sans-serif; background: #f9fafb; color: #333; }
 header { background: #fff; padding: 1.5rem; text-align: center; border-bottom: 1px solid #e5e7eb; }
-header h1 { font-size: 2rem; font-weight: 600; }
 .container { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
 
 /* 角色 & 卡牌 区域 */
 .role-selection, .lineup-form { margin-bottom: 1.5rem; }
 .role-slots, .card-slots { display: flex; flex-wrap: wrap; gap: 1rem; }
-.role-slot, .slot { text-align: center; width: calc(50% - 0.5rem); }
-.card-slots .slot { width: calc(33.333% - 0.667rem); }
+.role-slot { width: calc(50% - 0.5rem); text-align: center; }
+.slot { width: calc(33.333% - 0.667rem); text-align: center; position: relative; }
 .slot-img { width: 100%; padding-top: 100%; position: relative; background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; }
 .slot-img img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; }
-.slot-btn, .role-btn { display: block; margin: 0.5rem auto; background: #3b82f6; color: #fff; border: none; padding: 0.5rem; border-radius: 6px; cursor: pointer; }
-.slot-btn:hover, .role-btn:hover { background: #2563eb; }
+
+/* 按钮 */
+.slot-btn, .role-btn, .equip-btn { 
+  display: inline-block; margin: 0.5rem 0.25rem; 
+  background: #3b82f6; color: #fff; border: none; padding: 0.4rem 0.8rem; border-radius: 6px; cursor: pointer;
+  font-size: 0.9rem;
+}
+.slot-btn:hover, .role-btn:hover, .equip-btn:hover { background: #2563eb; }
 
 #saveLineup { display: block; margin: 1rem auto 2rem; background: #10b981; color: #fff; padding: 0.75rem 1.5rem; border: none; border-radius: 6px; cursor: pointer; }
 #saveLineup:hover { background: #059669; }
 
 /* 历史阵容 一览 */
 .history-row {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
-  overflow-x: auto;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid #e5e7eb;
+  display: flex; align-items: center; gap: 1rem;
+  margin-bottom: 1rem; overflow-x: auto; padding: 0.5rem 0; border-bottom: 1px solid #e5e7eb;
 }
 .history-img {
-  flex: 0 0 auto;
-  width: 80px;
-  text-align: center;
+  flex: 0 0 auto; width: 80px; text-align: center; position: relative;
 }
 .history-img img {
-  width: 80px;
-  height: 80px;
-  object-fit: contain;
-  border-radius: 4px;
+  width: 80px; height: 80px; object-fit: contain; border-radius: 4px;
 }
-.history-img p {
-  margin-top: 0.25rem;
-  font-size: 0.8rem;
+.history-img p { margin-top: 0.25rem; font-size: 0.8rem; }
+.history-img .history-equip-btn {
+  position: absolute; bottom: 4px; right: 4px;
+  background: #f59e0b; padding: 0.2rem 0.4rem; font-size: 0.7rem; border-radius: 4px; border: none; color: #fff; cursor: pointer;
 }
+.history-img .history-equip-btn:hover { background: #d97706; }
 
-/* 弹窗 */
+/* 弹窗 基础 */
 .modal {
-  display: none;
-  position: fixed; top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.5);
-  align-items: center; justify-content: center;
-  z-index: 1000;
+  display: none; position: fixed; top: 0; left: 0;
+  width: 100%; height: 100%; background: rgba(0,0,0,0.5);
+  align-items: center; justify-content: center; z-index: 1000;
 }
 .modal.show { display: flex; }
 .modal-content {
-  background: #fff;
-  border-radius: 8px;
-  width: 90%; max-width: 600px;
-  max-height: 80%;
-  overflow-y: auto;
-  padding: 1rem;
-  position: relative;
+  background: #fff; border-radius: 8px;
+  width: 90%; max-width: 600px; max-height: 80%; overflow-y: auto; padding: 1rem;
 }
-.modal-header {
-  display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 1rem;
-}
-.modal-header button {
-  background: none; border: none; font-size: 1.5rem; cursor: pointer;
-}
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+.modal-header button { background: none; border: none; font-size: 1.5rem; cursor: pointer; }
 .modal-filters { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
-.modal-filters select, .modal-filters input {
-  flex: 1; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 6px;
-}
+.modal-filters select, .modal-filters input { flex: 1; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 6px; }
+
+/* 弹窗列表 */
 .modal-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: 0.75rem;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 0.75rem;
 }
-.role-item, .card-item, .equip-item {
-  text-align: center;
-}
-.role-item img, .card-item img, .equip-item img {
-  width: 100%; height: 100px; object-fit: contain; border-radius: 4px;
-}
-.role-item p, .card-item p, .equip-item p {
-  margin: 0.5rem 0 0.25rem; font-size: 0.9rem;
-}
+.role-item, .card-item, .equip-item { text-align: center; }
+.role-item img, .card-item img, .equip-item img { width: 100%; height: 100px; object-fit: contain; border-radius: 4px; }
+.role-item p, .card-item p, .equip-item p { margin: 0.5rem 0 0.25rem; font-size: 0.9rem; }
 .role-item button, .card-item button, .equip-item button {
   background: #3b82f6; color: #fff; border: none; padding: 0.25rem 0.5rem; border-radius: 4px; cursor: pointer;
 }
-.role-item button:hover, .card-item button:hover, .equip-item button:hover {
-  background: #2563eb;
-}
-/* 装备已选栏 */
-.selected-equips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 0.75rem;
-}
-.selected-equip {
-  width: 50px; height: 50px; object-fit: contain; border: 1px solid #ddd; border-radius: 4px;
-}
+.role-item button:hover, .card-item button:hover, .equip-item button:hover { background: #2563eb; }
+
+/* 已选装备 显示 */
+.selected-equips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.75rem; }
+.selected-equip { width: 50px; height: 50px; object-fit: contain; border: 1px solid #ddd; border-radius: 4px; }
